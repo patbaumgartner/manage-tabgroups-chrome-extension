@@ -366,3 +366,40 @@ describe('closeSavedTabs when the browser rejects the batch', () => {
     );
   });
 });
+
+describe('closeSavedTabs while a tab is still loading', () => {
+  afterEach(uninstallFakeChrome);
+
+  it('closes a tab that has not committed its navigation yet', async () => {
+    const fake = installFakeChrome({
+      windows: [
+        {
+          groups: [{ title: 'Work', tabs: [{ url: 'https://a/' }, { url: 'https://b/' }] }],
+          looseTabs: [{ url: 'https://keep/' }],
+        },
+      ],
+    });
+    const savedTabs = fake._state.tabs
+      .filter((tab) => tab.groupId !== -1)
+      .map((tab) => ({ id: tab.id, url: tab.url }));
+    const stillLoading = savedTabs[1];
+    assert.ok(stillLoading);
+    // Chrome reports an empty `url` and puts the target in `pendingUrl` until the
+    // navigation commits. That must not read as "this tab navigated away".
+    fake.tabs.query = () =>
+      Promise.resolve(
+        fake._state.tabs.map((tab) =>
+          tab.id === stillLoading.id ? { ...tab, url: '', pendingUrl: tab.url } : tab,
+        ),
+      );
+
+    const result = await closeSavedTabs(savedTabs);
+
+    assert.equal(result.changed, 0, 'a loading tab has not changed');
+    assert.equal(result.closed, 2);
+    assert.deepEqual(
+      fake._state.tabs.map((tab) => tab.url),
+      ['https://keep/'],
+    );
+  });
+});

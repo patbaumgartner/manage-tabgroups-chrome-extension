@@ -53,7 +53,7 @@ import {
  * @param {Session} session
  * @returns {SessionSummary}
  */
-export function summarizeSession(session) {
+function summarizeSession(session) {
   const stats = sessionStats(session);
   return {
     id: session.id,
@@ -83,7 +83,7 @@ export function summarizeSession(session) {
  * @returns {Promise<{ session: Session, savedTabs: SavedTab[], skippedTabs: number }>}
  * @throws {Error} When there is nothing to save or the session was not stored.
  */
-export async function captureSession(options = {}) {
+async function captureSession(options = {}) {
   const { groups, tabs } = await collectLiveGroups({
     scope: options.scope,
     windowId: options.windowId,

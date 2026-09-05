@@ -118,7 +118,7 @@ function seedState(windowSpecs) {
 /**
  * @param {FakeSpec} [spec]
  */
-export function createFakeChrome(spec = {}) {
+function createFakeChrome(spec = {}) {
   const state = seedState(spec.windows ?? []);
   const { windows, tabs, groups } = state;
 

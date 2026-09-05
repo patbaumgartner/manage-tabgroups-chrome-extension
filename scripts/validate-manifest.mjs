@@ -14,7 +14,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const HERE = dirname(fileURLToPath(import.meta.url));
 
 /** Repository root. */
-export const REPO_ROOT = resolve(HERE, '..');
+const REPO_ROOT = resolve(HERE, '..');
 
 /** The only permissions this extension is allowed to request. */
 export const ALLOWED_PERMISSIONS = ['tabs', 'tabGroups', 'storage', 'alarms'];

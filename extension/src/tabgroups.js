@@ -11,7 +11,7 @@
  *    window, a fresh new-tab page is opened in it first.
  */
 
-import { normalizeColor, normalizeUrl } from './model.js';
+import { normalizeColor, normalizeUrl, resolveTabUrl } from './model.js';
 
 /**
  * @typedef {import('./model.js').Session} Session
@@ -184,7 +184,7 @@ export async function closeSavedTabs(savedTabs) {
     if (tab === undefined) {
       continue;
     }
-    if (normalizeUrl(tab.url) !== saved.url) {
+    if (resolveTabUrl(tab) !== saved.url) {
       changed += 1;
       continue;
     }

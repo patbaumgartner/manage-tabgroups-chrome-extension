@@ -28,7 +28,6 @@
   "scripts": {
     "check": "npm run lint && npm run typecheck && npm run test && npm run validate",
     "lint": "biome ci .",
-    "format": "biome format --write .",
     "lint:fix": "biome check --write .",
     "typecheck": "tsc --noEmit",
     "test": "node --test",

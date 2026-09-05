@@ -42,7 +42,8 @@ export function normalizeSettings(value) {
     : DEFAULT_SETTINGS.autoBackupIntervalMinutes;
 
   return {
-    scope: record.scope === 'all' ? 'all' : 'window',
+    scope:
+      record.scope === 'all' || record.scope === 'window' ? record.scope : DEFAULT_SETTINGS.scope,
     autoBackup: toBoolean(record.autoBackup, DEFAULT_SETTINGS.autoBackup),
     autoBackupIntervalMinutes: clampedInterval,
     closePopupAfterAction: toBoolean(

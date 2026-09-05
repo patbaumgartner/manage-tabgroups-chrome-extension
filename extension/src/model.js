@@ -124,6 +124,21 @@ export function normalizeUrl(value) {
 }
 
 /**
+ * The URL a live tab should be stored under.
+ *
+ * A tab that has not committed its navigation yet reports an empty `url` and
+ * carries the target in `pendingUrl`. The save path and the close path must
+ * resolve this identically: if they disagree, a tab that is merely still
+ * loading looks like it navigated and is never closed.
+ *
+ * @param {RawTabLike} tab
+ * @returns {string | null}
+ */
+export function resolveTabUrl(tab) {
+  return normalizeUrl(tab.url) ?? normalizeUrl(tab.pendingUrl);
+}
+
+/**
  * @param {unknown} value
  * @returns {string} A color `chrome.tabGroups.update` will accept.
  */
@@ -239,7 +254,7 @@ function convertGroup(group, groupTabs) {
       skippedTabs += 1;
       continue;
     }
-    const url = normalizeUrl(tab.url) ?? normalizeUrl(tab.pendingUrl);
+    const url = resolveTabUrl(tab);
     if (url === null) {
       skippedTabs += 1;
       continue;
@@ -448,16 +463,16 @@ function normalizeId(value, createdAt, groups) {
  */
 export function validateSession(value, options = {}) {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-    return { ok: false, error: 'session is not an object' };
+    return { ok: false, error: 'The session is not an object.' };
   }
   const candidate = /** @type {Record<string, unknown>} */ (value);
   if (!Array.isArray(candidate.groups)) {
-    return { ok: false, error: 'session.groups is not an array' };
+    return { ok: false, error: 'The session has no groups array.' };
   }
 
   const groups = validateGroups(candidate.groups);
   if (groups.length === 0) {
-    return { ok: false, error: 'session contains no restorable tab group' };
+    return { ok: false, error: 'The session contains no restorable tab group.' };
   }
 
   const createdAt = normalizeTimestamp(candidate.createdAt, options.now ?? Date.now());
@@ -502,10 +517,10 @@ export function serializeExport(sessions, meta = {}) {
  */
 export function parseExport(text, options = {}) {
   if (typeof text !== 'string') {
-    return { ok: false, error: 'file could not be read as text' };
+    return { ok: false, error: 'The file could not be read as text.' };
   }
   if (textEncoder.encode(text).length > LIMITS.MAX_IMPORT_BYTES) {
-    return { ok: false, error: 'file is larger than the 8 MB import limit' };
+    return { ok: false, error: 'The file is larger than the 8 MB import limit.' };
   }
 
   /** @type {unknown} */
@@ -513,24 +528,24 @@ export function parseExport(text, options = {}) {
   try {
     parsed = JSON.parse(text);
   } catch {
-    return { ok: false, error: 'file is not valid JSON' };
+    return { ok: false, error: 'The file is not valid JSON.' };
   }
   if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
-    return { ok: false, error: 'file does not contain an export object' };
+    return { ok: false, error: 'The file does not contain an export object.' };
   }
 
   const record = /** @type {Record<string, unknown>} */ (parsed);
   if (record.format !== EXPORT_FORMAT) {
-    return { ok: false, error: 'file was not exported by this extension' };
+    return { ok: false, error: 'The file was not exported by this extension.' };
   }
   if (typeof record.schemaVersion === 'number' && record.schemaVersion > SCHEMA_VERSION) {
     return {
       ok: false,
-      error: 'file was written by a newer version of this extension. Update it first.',
+      error: 'The file was written by a newer version of this extension. Update it first.',
     };
   }
   if (!Array.isArray(record.sessions)) {
-    return { ok: false, error: 'export contains no sessions array' };
+    return { ok: false, error: 'The export contains no sessions array.' };
   }
 
   /** @type {Session[]} */
@@ -547,7 +562,7 @@ export function parseExport(text, options = {}) {
   rejected += Math.max(0, record.sessions.length - LIMITS.MAX_IMPORT_SESSIONS);
 
   if (sessions.length === 0) {
-    return { ok: false, error: 'export contains no restorable session' };
+    return { ok: false, error: 'The export contains no restorable session.' };
   }
   return { ok: true, sessions, rejected };
 }

@@ -35,7 +35,7 @@ const CHROME_CANDIDATES = [
  * @param {string} absolutePath
  * @returns {string}
  */
-export function unpackedExtensionId(absolutePath) {
+function unpackedExtensionId(absolutePath) {
   const hash = createHash('sha256').update(absolutePath, 'utf8').digest('hex').slice(0, 32);
   return [...hash].map((nibble) => String.fromCharCode(97 + Number.parseInt(nibble, 16))).join('');
 }
@@ -85,7 +85,7 @@ export async function waitFor(label, probe, timeoutMs = 20_000) {
 }
 
 /** Chrome DevTools Protocol client speaking the NUL-delimited pipe transport. */
-export class DevToolsPipe {
+class DevToolsPipe {
   /**
    * @param {import('node:stream').Writable} outgoing
    * @param {import('node:stream').Readable} incoming
