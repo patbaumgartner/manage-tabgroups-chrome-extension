@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.0] - 2026-09-05
-
-First release.
+Nothing has been released yet. These entries describe what is on `main` and
+will become the first tagged version. Until then, install the
+[snapshot build](README.md#option-b--the-latest-snapshot).
 
 ### Added
 
@@ -57,5 +57,4 @@ First release.
   remote image, stylesheet or CSS `url()` reference, and runs on every push
   together with CodeQL.
 
-[Unreleased]: https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/releases/tag/v1.0.0
+[Unreleased]: https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/commits/main

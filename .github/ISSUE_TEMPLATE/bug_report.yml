@@ -32,9 +32,11 @@ body:
   - type: input
     id: extension-version
     attributes:
-      label: Extension version
-      description: Shown at the top of the options page.
-      placeholder: 1.0.0
+      label: Extension version or commit
+      description: >
+        The version is shown at the top of the options page. If you installed a
+        snapshot, give the commit it names instead.
+      placeholder: 1.0.0, or snapshot 74e7b2c
     validations:
       required: true
 
@@ -52,7 +54,7 @@ body:
     attributes:
       label: Before submitting
       options:
-        - label: I am running the latest release
+        - label: I am running the latest release, or the latest snapshot build
           required: true
         - label: I searched the existing issues
           required: true

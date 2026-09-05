@@ -56,7 +56,12 @@ The extension is intentionally **not** published to the Chrome Web Store. It is
 installed as an unpacked extension, which means you can read every line of code
 you are running.
 
+> **No tagged release has been published yet.** Until the first one exists, use
+> the snapshot in option B below, or clone the repository as in option C.
+
 ### Option A — from a release archive
+
+*Available once the first version is tagged.*
 
 1. Download `manage-tabgroups-<version>.zip` from the
    [latest release](https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/releases/latest).
@@ -87,9 +92,9 @@ sha256sum -c manage-tabgroups-snapshot.zip.sha256
 
 Then unzip and load it as in option A. A snapshot only exists once lint, types,
 tests, the browser run and the reproducible build have all passed for that
-commit, but it is unreleased code: prefer a tagged release if you want
-stability. The release notes name the exact commit it was built from, and the
-file is replaced on every push.
+commit, but it is unreleased code: prefer a tagged release once one exists. The
+release notes name the exact commit it was built from, and the file is replaced
+on every push.
 
 Individual commits on other branches are packaged too, as workflow artifacts on
 their [CI run](.github/workflows/ci.yml); those need a GitHub login and expire

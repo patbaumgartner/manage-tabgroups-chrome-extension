@@ -56,7 +56,10 @@ jobs:
             exit 1
           fi
           if ! grep -q "^## \[$manifest_version\]" CHANGELOG.md; then
-            echo "::error::CHANGELOG.md has no '## [$manifest_version]' section"
+            echo "::error::CHANGELOG.md has no '## [$manifest_version]' section."
+            echo "::error::Move the entries under '## [Unreleased]' into a new"
+            echo "::error::'## [$manifest_version] - YYYY-MM-DD' section, add the link"
+            echo "::error::definitions at the bottom, then re-tag."
             exit 1
           fi
 

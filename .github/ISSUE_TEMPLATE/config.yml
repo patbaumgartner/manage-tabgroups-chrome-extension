@@ -3,6 +3,3 @@ contact_links:
   - name: Security vulnerability
     url: https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/security/advisories/new
     about: Report privately through a GitHub security advisory. Please do not open a public issue.
-  - name: Question or idea
-    url: https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/discussions
-    about: Ask a question or discuss an idea before opening an issue.

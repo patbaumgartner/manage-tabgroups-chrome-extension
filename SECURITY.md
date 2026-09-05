@@ -13,8 +13,13 @@ Do not attach an export file to a report: it contains your browsing history.
 
 ## Supported versions
 
-Only the most recent release is supported. There is no auto-update path for an
-extension loaded unpacked, so please pull the latest tag before reporting.
+No version has been tagged yet, so the supported version is the current tip of
+`main` — which is what the snapshot build contains. Once releases exist, only
+the most recent one will be supported.
+
+There is no auto-update path for an extension loaded unpacked: Chrome cannot
+update it, so please re-download and reload before reporting, and say which
+commit or snapshot you are running.
 
 ## Threat model
 

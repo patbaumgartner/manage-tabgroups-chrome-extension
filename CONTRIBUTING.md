@@ -70,6 +70,22 @@ try your change by hand. Reload the extension from that page after every edit.
 - Bump the version in **both** `package.json` and `extension/manifest.json`;
   validation fails if they drift apart.
 
+## Cutting a release
+
+No version has been tagged yet. When one is:
+
+1. Move the entries under `## [Unreleased]` in `CHANGELOG.md` into a new
+   `## [x.y.z] - YYYY-MM-DD` section, and add the matching link definitions at
+   the bottom of the file.
+2. Set the same version in **both** `package.json` and
+   `extension/manifest.json`; `npm run validate` fails if they disagree.
+3. Commit, then tag `vx.y.z` and push the tag.
+
+The release workflow re-runs every gate including the browser test, refuses to
+publish if the tag, the manifest version and the changelog section do not all
+agree, and then attaches the reproducible archive and its checksum. The rolling
+`snapshot` pre-release is separate and is never promoted to a real release.
+
 ## Reporting bugs and vulnerabilities
 
 Bugs go in [issues](https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/issues).
