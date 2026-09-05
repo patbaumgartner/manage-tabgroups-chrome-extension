@@ -125,3 +125,87 @@ jobs:
           name: manage-tabgroups-${{ github.sha }}
           path: dist/
           if-no-files-found: error
+
+  snapshot:
+    name: Publish snapshot
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [check, e2e, package]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    # A snapshot always represents the tip of main. If two pushes land close
+    # together, cancelling the older run avoids two jobs racing to move the
+    # rolling tag and leaving the release pointing at the wrong commit.
+    concurrency:
+      group: snapshot
+      cancel-in-progress: true
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the extension archive
+        run: npm run build
+
+      - name: Assemble the snapshot files
+        run: |
+          mkdir -p snapshot
+          cp dist/*.zip snapshot/manage-tabgroups-snapshot.zip
+          cd snapshot
+          sha256sum manage-tabgroups-snapshot.zip > manage-tabgroups-snapshot.zip.sha256
+
+      - name: Publish the rolling snapshot release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version=$(node -p "require('./extension/manifest.json').version")
+          checksum=$(cut -d' ' -f1 snapshot/manage-tabgroups-snapshot.zip.sha256)
+          {
+            echo "Automatic build of the latest commit on \`main\`. Unreleased and"
+            echo "unsigned: for a stable version use the newest tagged release instead."
+            echo
+            echo "| | |"
+            echo "| --- | --- |"
+            echo "| Commit | [\`${GITHUB_SHA:0:7}\`](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}) |"
+            echo "| Manifest version | \`${version}\` |"
+            echo "| Built | $(date -u '+%Y-%m-%d %H:%M UTC') |"
+            echo "| SHA-256 | \`${checksum}\` |"
+            echo
+            echo "### Install"
+            echo
+            echo '```bash'
+            echo "sha256sum -c manage-tabgroups-snapshot.zip.sha256"
+            echo '```'
+            echo
+            echo "Unzip it into a folder you intend to keep, open your browser's"
+            echo "extensions page, enable Developer mode, and choose **Load unpacked**."
+            echo
+            echo "This release is replaced on every push to \`main\`."
+          } > snapshot-notes.md
+
+          # The tag is rolling, so the previous snapshot and its tag are removed
+          # before the new one is created. Releases tagged v*.*.* are untouched.
+          gh release delete snapshot --yes --cleanup-tag 2>/dev/null || true
+          gh release create snapshot snapshot/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "Snapshot of main (${GITHUB_SHA:0:7})" \
+            --notes-file snapshot-notes.md \
+            --prerelease
+
+          {
+            echo "### Snapshot published"
+            echo
+            echo "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/tag/snapshot"
+          } >> "$GITHUB_STEP_SUMMARY"

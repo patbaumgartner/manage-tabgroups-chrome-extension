@@ -60,6 +60,8 @@ you are running.
 
 1. Download `manage-tabgroups-<version>.zip` from the
    [latest release](https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/releases/latest).
+   Snapshots are marked as pre-releases, so this link always resolves to a
+   tagged version.
 2. Verify the download against the published `.sha256` file:
 
    ```bash
@@ -71,12 +73,27 @@ you are running.
 4. Open `chrome://extensions`, enable **Developer mode**, choose **Load
    unpacked**, and select the unzipped folder.
 
-### Option B — from a CI build
+### Option B — the latest snapshot
 
-Every pushed commit is packaged by the
-[CI workflow](.github/workflows/ci.yml). Open the run for the commit you want,
-and download the `manage-tabgroups-<sha>` artifact; the run summary lists the
-archive name and its SHA-256. Unzip and load it exactly as in option A.
+Every push to `main` publishes a
+[**snapshot** pre-release](https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/releases/tag/snapshot)
+built from that commit, at a stable address:
+
+```bash
+curl -LO https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/releases/download/snapshot/manage-tabgroups-snapshot.zip
+curl -LO https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/releases/download/snapshot/manage-tabgroups-snapshot.zip.sha256
+sha256sum -c manage-tabgroups-snapshot.zip.sha256
+```
+
+Then unzip and load it as in option A. A snapshot only exists once lint, types,
+tests, the browser run and the reproducible build have all passed for that
+commit, but it is unreleased code: prefer a tagged release if you want
+stability. The release notes name the exact commit it was built from, and the
+file is replaced on every push.
+
+Individual commits on other branches are packaged too, as workflow artifacts on
+their [CI run](.github/workflows/ci.yml); those need a GitHub login and expire
+after 90 days.
 
 ### Option C — from a clone
 
