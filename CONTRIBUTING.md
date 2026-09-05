@@ -46,6 +46,12 @@ try your change by hand. Reload the extension from that page after every edit.
   Do not move mutations into `popup/` or `options/`.
 - Build DOM with `document.createElement` and `textContent`. Assigning
   `innerHTML` fails validation.
+- The README screenshots are generated from the running extension by
+  `npm run screenshots`, which drives a real browser through the same harness as
+  the end-to-end run. The demo data in it is invented; never commit a screenshot
+  containing real browsing history. Commit the files exactly as the script
+  produces them - post-processing them means regenerating no longer reproduces
+  what is in the repository.
 - The icons are generated from `assets/icon.svg`:
 
   ```bash

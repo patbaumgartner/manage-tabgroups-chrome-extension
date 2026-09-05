@@ -35,7 +35,8 @@
     "test:coverage": "node --test --experimental-test-coverage",
     "validate": "node scripts/validate-manifest.mjs",
     "build": "node scripts/build.mjs",
-    "e2e": "node scripts/e2e.mjs"
+    "e2e": "node scripts/e2e.mjs",
+    "screenshots": "node scripts/screenshots.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.12",
