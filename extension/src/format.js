@@ -70,10 +70,18 @@ export function formatSource(source) {
  * @param {{ groupCount: number, tabCount: number }} saved
  * @param {number} skippedTabs
  * @param {number} [changedTabs]
+ * @param {number} [closedTabs] Actual tabs closed, when it differs from what was saved.
  * @returns {string}
  */
-export function formatCloseResult(saved, skippedTabs, changedTabs = 0) {
-  const parts = [`Saved and closed ${formatCounts(saved.groupCount, saved.tabCount)}.`];
+export function formatCloseResult(saved, skippedTabs, changedTabs = 0, closedTabs) {
+  const closed = closedTabs ?? saved.tabCount;
+  const parts =
+    closed === saved.tabCount
+      ? [`Saved and closed ${formatCounts(saved.groupCount, saved.tabCount)}.`]
+      : [
+          `Saved ${formatCounts(saved.groupCount, saved.tabCount)},`,
+          `closed ${pluralize(closed, 'tab', 'tabs')}.`,
+        ];
   if (skippedTabs > 0) {
     parts.push(`${pluralize(skippedTabs, 'tab', 'tabs')} left open (unsupported address).`);
   }
@@ -86,11 +94,14 @@ export function formatCloseResult(saved, skippedTabs, changedTabs = 0) {
 /**
  * Build the sentence shown after an import.
  *
- * @param {{ imported: number, rejected: number, evicted: number }} result
+ * @param {{ imported: number, rejected: number, evicted: number, replaced: number }} result
  * @returns {string}
  */
 export function formatImportResult(result) {
   const parts = [`Imported ${pluralize(result.imported, 'session', 'sessions')}.`];
+  if (result.replaced > 0) {
+    parts.push(`${pluralize(result.replaced, 'existing session', 'existing sessions')} replaced.`);
+  }
   if (result.rejected > 0) {
     parts.push(`${pluralize(result.rejected, 'entry', 'entries')} skipped as unusable.`);
   }

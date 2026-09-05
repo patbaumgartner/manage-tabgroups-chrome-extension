@@ -274,7 +274,9 @@ dom.importFile.addEventListener('change', () => {
     async () => request(MESSAGE_TYPES.IMPORT_SESSIONS, { text: await file.text() }),
     (result) =>
       formatImportResult(
-        /** @type {{ imported: number, rejected: number, evicted: number }} */ (result),
+        /** @type {{ imported: number, rejected: number, evicted: number, replaced: number }} */ (
+          result
+        ),
       ),
   );
 });

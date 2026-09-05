@@ -242,6 +242,7 @@ the dev dependencies are only a type checker, a linter and type definitions.
 npm ci
 npm run check        # everything below except e2e: the gate CI runs
 npm test             # unit tests only
+npm run test:coverage  # unit tests with a line/branch/function report
 npm run lint         # Biome, check-only (as CI runs it)
 npm run lint:fix     # Biome, applying formatting and safe fixes
 npm run typecheck    # tsc --noEmit over the JSDoc-typed sources

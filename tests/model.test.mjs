@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { EXPORT_FORMAT, LIMITS } from '../extension/src/constants.js';
+import { EXPORT_FORMAT, LIMITS, SCHEMA_VERSION } from '../extension/src/constants.js';
 import {
   buildSession,
   createSessionId,
@@ -517,5 +517,64 @@ describe('sessionSignature', () => {
       sessionSignature(build(false)),
       'an automatic backup must notice a collapse-only change',
     );
+  });
+});
+
+describe('derived session identifiers', () => {
+  it('does not collide for the known 32-bit FNV-1a collision pair', () => {
+    /** @param {string} title */
+    const build = (title) => ({
+      createdAt: 1_700_000_000_000,
+      groups: [
+        {
+          title,
+          color: 'blue',
+          collapsed: false,
+          tabs: [{ url: 'https://example.com/', title: '' }],
+        },
+      ],
+    });
+    const a = validateSession(build('sa9uz22nclo'));
+    const b = validateSession(build('2twd3704ck7'));
+    assert.ok(a.ok && b.ok);
+    assert.notEqual(a.session.id, b.session.id, 'deleting one must not delete the other');
+  });
+
+  it('keeps the same id when the timestamp has to be repaired', () => {
+    const raw = {
+      createdAt: 999_999_999_999,
+      groups: [{ title: 'x', color: 'blue', tabs: [{ url: 'https://a.example/' }] }],
+    };
+    const first = validateSession(raw, { now: 1_700_000_000_000 });
+    const second = validateSession(raw, { now: 1_700_000_050_000 });
+    assert.ok(first.ok && second.ok);
+    assert.notEqual(first.session.createdAt, second.session.createdAt);
+    assert.equal(first.session.id, second.session.id, 'a repaired clock must not change the id');
+  });
+});
+
+describe('schema version gate', () => {
+  it('refuses a schema version that is not a usable number', () => {
+    for (const version of ['999', null, Number.NaN, 1.5, {}]) {
+      const result = parseExport(
+        JSON.stringify({
+          format: EXPORT_FORMAT,
+          schemaVersion: version,
+          sessions: [{ groups: [{ tabs: [{ url: 'https://ok.example/' }] }] }],
+        }),
+      );
+      assert.equal(result.ok, false, `schemaVersion ${JSON.stringify(version)} must be refused`);
+    }
+  });
+
+  it('still accepts a missing or current schema version', () => {
+    for (const version of [undefined, SCHEMA_VERSION]) {
+      const payload = {
+        format: EXPORT_FORMAT,
+        sessions: [{ groups: [{ tabs: [{ url: 'https://ok.example/' }] }] }],
+        ...(version === undefined ? {} : { schemaVersion: version }),
+      };
+      assert.equal(parseExport(JSON.stringify(payload)).ok, true);
+    }
   });
 });

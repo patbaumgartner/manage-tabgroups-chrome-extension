@@ -121,11 +121,14 @@ export async function summarizeLiveGroups(options = {}) {
  * Make sure removing `tabIds` cannot close a window.
  *
  * @param {readonly number[]} tabIds
- * @param {readonly RawTabLike[]} allTabs
  * @returns {Promise<number>} How many placeholder tabs were opened.
  */
-async function keepWindowsAlive(tabIds, allTabs) {
+async function keepWindowsAlive(tabIds) {
   const closing = new Set(tabIds);
+  // Deliberately re-read rather than reuse the caller's snapshot: another tab in
+  // the same window may have closed since then, and deciding from stale counts
+  // could let the last tab go and take the window with it.
+  const allTabs = await chrome.tabs.query({});
 
   /** @type {Map<number, { total: number, closing: number }>} */
   const perWindow = new Map();
@@ -184,7 +187,14 @@ export async function closeSavedTabs(savedTabs) {
     if (tab === undefined) {
       continue;
     }
-    if (resolveTabUrl(tab) !== saved.url) {
+    // A tab is only closable while it still holds what was saved: the committed
+    // URL must match, there must be no navigation in flight to somewhere else,
+    // and it must still be in a group. Otherwise closing it would discard a page
+    // that was never stored, or an ungrouped tab this extension never owns.
+    const pending = tab.pendingUrl === undefined ? null : normalizeUrl(tab.pendingUrl);
+    const navigatingElsewhere = pending !== null && pending !== saved.url;
+    const stillGrouped = typeof tab.groupId === 'number' && tab.groupId !== TAB_GROUP_ID_NONE;
+    if (resolveTabUrl(tab) !== saved.url || navigatingElsewhere || !stillGrouped) {
       changed += 1;
       continue;
     }
@@ -195,7 +205,7 @@ export async function closeSavedTabs(savedTabs) {
     return { closed: 0, changed, placeholdersOpened: 0 };
   }
 
-  const placeholdersOpened = await keepWindowsAlive(closable, allTabs);
+  const placeholdersOpened = await keepWindowsAlive(closable);
   try {
     await chrome.tabs.remove(closable);
     return { closed: closable.length, changed, placeholdersOpened };

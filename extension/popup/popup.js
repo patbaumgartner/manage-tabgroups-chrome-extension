@@ -242,8 +242,8 @@ dom.closeAll.addEventListener('click', () => {
     () => request(MESSAGE_TYPES.CLOSE_ALL_GROUPS, { windowId }),
     (result) => {
       const typed = /** @type {{ saved: SessionSummary, skippedTabs: number,
-        changedTabs: number }} */ (result);
-      return formatCloseResult(typed.saved, typed.skippedTabs, typed.changedTabs);
+        changedTabs: number, closedTabs: number }} */ (result);
+      return formatCloseResult(typed.saved, typed.skippedTabs, typed.changedTabs, typed.closedTabs);
     },
   );
 });

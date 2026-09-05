@@ -154,21 +154,27 @@ export function createSessionId() {
 }
 
 /**
- * FNV-1a, used only to derive a stable identifier for a stored session whose own
- * id was lost or corrupted. It must stay deterministic: `readSessions` runs this
- * on every read, and a changing id would make the entry impossible to restore or
- * delete from the UI.
+ * A 64-bit fingerprint, used only to derive a stable identifier for a stored
+ * session whose own id was lost or corrupted.
+ *
+ * Two independent FNV-1a rounds are combined because a single 32-bit round
+ * collides far too easily to identify a session: `sa9uz22nclo` and
+ * `2twd3704ck7` both hash to 2402c7ee. Deleting one session would then delete
+ * the other. It must also stay deterministic - `readSessions` runs this on
+ * every read, and a changing id makes an entry impossible to restore or delete.
  *
  * @param {string} value
  * @returns {string}
  */
 function fingerprint(value) {
-  let hash = 0x81_1c_9d_c5;
+  let low = 0x81_1c_9d_c5;
+  let high = 0xc2_b2_ae_35;
   for (let index = 0; index < value.length; index += 1) {
-    hash ^= value.charCodeAt(index);
-    hash = Math.imul(hash, 0x01_00_01_93) >>> 0;
+    const code = value.charCodeAt(index);
+    low = Math.imul(low ^ code, 0x01_00_01_93) >>> 0;
+    high = Math.imul(high ^ code, 0x85_eb_ca_6b) >>> 0;
   }
-  return hash.toString(16).padStart(8, '0');
+  return low.toString(16).padStart(8, '0') + high.toString(16).padStart(8, '0');
 }
 
 /**
@@ -439,16 +445,22 @@ function normalizeSource(value) {
 }
 
 /**
+ * Derive an id from the session's contents alone.
+ *
+ * The timestamp is deliberately excluded: `normalizeTimestamp` substitutes the
+ * current time for an out-of-range value, so including it would hand the same
+ * session a different id on every read and make it impossible to restore or
+ * delete from the UI.
+ *
  * @param {unknown} value
- * @param {number} createdAt
  * @param {readonly StoredGroup[]} groups
  * @returns {string}
  */
-function normalizeId(value, createdAt, groups) {
+function normalizeId(value, groups) {
   if (typeof value === 'string' && value.length > 0 && value.length <= 128) {
     return value;
   }
-  return `s-${createdAt.toString(36)}-${fingerprint(JSON.stringify(groups))}`;
+  return `s-${fingerprint(JSON.stringify(groups))}`;
 }
 
 /**
@@ -479,7 +491,7 @@ export function validateSession(value, options = {}) {
   return {
     ok: true,
     session: {
-      id: normalizeId(candidate.id, createdAt, groups),
+      id: normalizeId(candidate.id, groups),
       createdAt,
       source: options.source ?? normalizeSource(candidate.source),
       groups,
@@ -538,7 +550,13 @@ export function parseExport(text, options = {}) {
   if (record.format !== EXPORT_FORMAT) {
     return { ok: false, error: 'The file was not exported by this extension.' };
   }
-  if (typeof record.schemaVersion === 'number' && record.schemaVersion > SCHEMA_VERSION) {
+  const declaredSchema = record.schemaVersion;
+  const schemaIsUsable =
+    declaredSchema === undefined ||
+    (typeof declaredSchema === 'number' &&
+      Number.isInteger(declaredSchema) &&
+      declaredSchema <= SCHEMA_VERSION);
+  if (!schemaIsUsable) {
     return {
       ok: false,
       error: 'The file was written by a newer version of this extension. Update it first.',

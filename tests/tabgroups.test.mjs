@@ -403,3 +403,89 @@ describe('closeSavedTabs while a tab is still loading', () => {
     );
   });
 });
+
+describe('closeSavedTabs only closes what it still owns', () => {
+  afterEach(uninstallFakeChrome);
+
+  /**
+   * @param {ReturnType<typeof installFakeChrome>} fake
+   * @param {(tab: import('./helpers/fake-chrome.mjs').FakeTab) =>
+   *   import('./helpers/fake-chrome.mjs').FakeTab} mutate
+   * @returns {Promise<{ closed: number, changed: number, placeholdersOpened: number }>}
+   */
+  const closeWithLiveState = async (fake, mutate) => {
+    const savedTabs = fake._state.tabs
+      .filter((tab) => tab.groupId !== -1)
+      .map((tab) => ({ id: tab.id, url: tab.url }));
+    fake.tabs.query = () => Promise.resolve(fake._state.tabs.map((tab) => mutate(tab)));
+    return closeSavedTabs(savedTabs);
+  };
+
+  /** @returns {ReturnType<typeof installFakeChrome>} */
+  const twoGroupedPlusLoose = () =>
+    installFakeChrome({
+      windows: [
+        {
+          groups: [{ title: 'Work', tabs: [{ url: 'https://a/' }, { url: 'https://b/' }] }],
+          looseTabs: [{ url: 'https://keep/' }],
+        },
+      ],
+    });
+
+  it('leaves a tab that is navigating somewhere it never saved', async () => {
+    const fake = twoGroupedPlusLoose();
+    const target = fake._state.tabs.find((tab) => tab.url === 'https://b/');
+    assert.ok(target);
+    const result = await closeWithLiveState(fake, (tab) =>
+      tab.id === target.id ? { ...tab, pendingUrl: 'https://elsewhere/' } : tab,
+    );
+
+    assert.equal(result.changed, 1);
+    assert.equal(result.closed, 1);
+    assert.ok(
+      fake._state.tabs.some((tab) => tab.id === target.id),
+      'the in-flight navigation was never stored, so the tab must survive',
+    );
+  });
+
+  it('leaves a tab that was ungrouped after being saved', async () => {
+    const fake = twoGroupedPlusLoose();
+    const target = fake._state.tabs.find((tab) => tab.url === 'https://b/');
+    assert.ok(target);
+    const result = await closeWithLiveState(fake, (tab) =>
+      tab.id === target.id ? { ...tab, groupId: -1 } : tab,
+    );
+
+    assert.equal(result.changed, 1);
+    assert.ok(
+      fake._state.tabs.some((tab) => tab.id === target.id),
+      'ungrouped tabs are never closed',
+    );
+  });
+
+  it('still opens a placeholder when the other tabs vanish mid-operation', async () => {
+    const fake = twoGroupedPlusLoose();
+    const loose = fake._state.tabs.find((tab) => tab.groupId === -1);
+    assert.ok(loose);
+    const savedTabs = fake._state.tabs
+      .filter((tab) => tab.groupId !== -1)
+      .map((tab) => ({ id: tab.id, url: tab.url }));
+    // The loose tab disappears after the matching snapshot was taken.
+    let call = 0;
+    const real = fake.tabs.query.bind(fake.tabs);
+    fake.tabs.query = async (query) => {
+      call += 1;
+      const tabs = await real(query);
+      if (call === 1) {
+        return tabs;
+      }
+      await fake.tabs.remove(loose.id).catch(() => undefined);
+      return (await real(query)).filter((tab) => tab.id !== loose.id);
+    };
+
+    const result = await closeSavedTabs(savedTabs);
+
+    assert.equal(result.placeholdersOpened, 1, 'the window must not be allowed to close');
+    assert.ok(fake._state.windows.length >= 1);
+  });
+});

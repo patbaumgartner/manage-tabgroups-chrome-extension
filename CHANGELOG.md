@@ -26,7 +26,28 @@ will become the first tagged version. Until then, install the
 - Runtime detection of browsers without the `chrome.tabGroups` API, with a
   clear message instead of a silent failure.
 
+### Fixed
+
+- "Save and close" no longer closes a tab that was navigating to an address it
+  had not stored, or one that was ungrouped while the session was being written.
+  A window can no longer be closed by a tab disappearing mid-operation either.
+- The result of a close now reports the number of tabs actually closed instead
+  of assuming every saved tab was closed, so it cannot say "saved and closed 3
+  tabs" and "1 tab left open" in the same sentence.
+- An import that reuses the identifier of a stored session reports how many
+  sessions it replaced, rather than presenting a silent overwrite as a clean
+  import.
+- Sessions whose stored identifier is missing are identified by a 64-bit
+  fingerprint of their contents. The previous 32-bit value had reachable
+  collisions, which could make deleting one session delete another, and it no
+  longer changes when an out-of-range timestamp is repaired.
+- Interactive controls use a border that meets the WCAG 2.2 AA 1.4.11 contrast
+  minimum of 3:1 against both the page and the panel behind them.
+
 ### Security
+
+- An export declaring a schema version that is not a usable whole number is
+  refused rather than treated as compatible.
 
 - The session is read back from storage and confirmed present before a single
   tab is closed, so a storage failure or a retention limit can never turn

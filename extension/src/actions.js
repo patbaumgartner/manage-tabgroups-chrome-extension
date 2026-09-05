@@ -276,7 +276,7 @@ export async function exportSessions(version) {
  *
  * @param {unknown} text Raw contents of a previously exported file.
  * @returns {Promise<{ imported: number, rejected: number, evicted: number,
- *   sessions: SessionSummary[] }>}
+ *   replaced: number, sessions: SessionSummary[] }>}
  */
 export async function importSessions(text) {
   const parsed = parseExport(text);
@@ -293,11 +293,16 @@ export async function importSessions(text) {
   const evicted = before.filter(
     (session) => !storedIds.has(session.id) && !incomingIds.has(session.id),
   ).length;
+  // An entry that reuses the id of a stored session overwrites it. That makes
+  // re-importing your own export idempotent, but it must be reported: otherwise
+  // a crafted file can quietly replace a backup and still look like a success.
+  const replaced = before.filter((session) => incomingIds.has(session.id)).length;
 
   return {
     imported,
     rejected: parsed.rejected + (parsed.sessions.length - imported),
     evicted,
+    replaced,
     sessions: stored.map(summarizeSession),
   };
 }

@@ -4,6 +4,10 @@
   --tgk-bg: #ffffff;
   --tgk-bg-subtle: #f5f6f8;
   --tgk-border: #dfe2e8;
+  /* Boundary of an interactive control. WCAG 2.2 AA 1.4.11 wants 3:1 against
+     both the page and the panel a control sits on; --tgk-border is a decorative
+     divider and is deliberately lighter. */
+  --tgk-border-control: #868c93;
   --tgk-text: #1f2328;
   --tgk-text-muted: #59636e;
   --tgk-accent: #1a73e8;
@@ -20,6 +24,7 @@
     --tgk-bg: #1b1c1e;
     --tgk-bg-subtle: #26282b;
     --tgk-border: #3c4043;
+    --tgk-border-control: #757a7f;
     --tgk-text: #e8eaed;
     --tgk-text-muted: #9aa0a6;
     --tgk-accent: #8ab4f8;
@@ -65,7 +70,7 @@ h3 {
   width: 100%;
   min-height: 34px;
   padding: 7px 12px;
-  border: 1px solid var(--tgk-border);
+  border: 1px solid var(--tgk-border-control);
   border-radius: var(--tgk-radius);
   background: var(--tgk-bg-subtle);
   color: var(--tgk-text);
