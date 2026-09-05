@@ -110,7 +110,9 @@
         </dl>
         <p class="card__hint">
           The extension declares no host permissions, injects no scripts into web pages, and makes
-          no network requests. Its content security policy blocks outbound connections entirely.
+          no network requests. Without a host permission its service worker cannot reach any
+          origin, and its own pages are additionally restricted by a content security policy that
+          blocks outbound connections.
         </p>
         <p class="card__hint">
           Source code:

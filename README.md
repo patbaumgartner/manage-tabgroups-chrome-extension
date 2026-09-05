@@ -170,8 +170,10 @@ closed or restored (`!` if it failed).
 
 The extension declares **no host permissions**, injects **no content scripts**,
 exposes **no web-accessible resources**, and has **no** `externally_connectable`
-entry. Its content security policy blocks outbound connections
-(`connect-src 'none'`) in addition to pinning `script-src` to `'self'`.
+entry. Two separate mechanisms keep it off the network: a service worker can
+only reach an origin it holds a host permission for, and there are none; and the
+extension's own pages are additionally pinned by a content security policy of
+`default-src 'none'` with `connect-src 'none'`.
 
 These properties are asserted by [`scripts/validate-manifest.mjs`](scripts/validate-manifest.mjs),
 which runs in CI and fails the build if any of them regresses.
