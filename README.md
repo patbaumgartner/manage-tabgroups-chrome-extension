@@ -3,6 +3,7 @@
 [![CI](https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/actions/workflows/ci.yml/badge.svg)](https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/actions/workflows/codeql.yml/badge.svg)](https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/actions/workflows/codeql.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Download the latest snapshot](https://img.shields.io/badge/Download-latest%20snapshot-1a73e8?logo=googlechrome&logoColor=white)](https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/releases/download/snapshot/manage-tabgroups-snapshot.zip)
 
 Save and close **every tab group at once**, then bring them all back with **one
 click**. A Manifest V3 extension for Chrome and other Chromium browsers, with no
@@ -50,77 +51,93 @@ This extension makes that recoverable:
 - **Never closes a window by accident**: if a group was the last thing in a
   window, a new tab page is opened before the group is closed.
 
-## Install from GitHub
+## Install
 
-The extension is intentionally **not** published to the Chrome Web Store. It is
-installed as an unpacked extension, which means you can read every line of code
-you are running.
+**Three steps, about a minute.** No store account, no build tools.
 
-> **No tagged release has been published yet.** Until the first one exists, use
-> the snapshot in option B below, or clone the repository as in option C.
+<p align="center">
+  <a href="https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/releases/download/snapshot/manage-tabgroups-snapshot.zip"><b>⬇ Download manage-tabgroups-snapshot.zip</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/releases/download/snapshot/manage-tabgroups-snapshot.zip.sha256">checksum</a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/releases/tag/snapshot">what is in this build</a>
+</p>
 
-### Option A — from a release archive
+1. **Download** the zip above and unzip it into a folder you will keep.
+   The browser loads the extension from that folder on every start, so do not
+   delete or move it afterwards.
+2. **Open your extensions page** and switch on **Developer mode** (top right):
 
-*Available once the first version is tagged.*
+   | Browser | Address |
+   | --- | --- |
+   | Chrome | `chrome://extensions` |
+   | Edge | `edge://extensions` |
+   | Brave | `brave://extensions` |
+   | Vivaldi | `vivaldi://extensions` |
+   | Opera | `opera://extensions` |
 
-1. Download `manage-tabgroups-<version>.zip` from the
-   [latest release](https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/releases/latest).
-   Snapshots are marked as pre-releases, so this link always resolves to a
-   tagged version.
-2. Verify the download against the published `.sha256` file:
+3. **Click *Load unpacked*** and choose the unzipped folder. The icon appears in
+   the toolbar immediately.
 
-   ```bash
-   sha256sum -c manage-tabgroups-<version>.zip.sha256
-   ```
+The download is the current tip of `main`, rebuilt on every push once lint,
+types, tests, a real-browser run and a reproducible build have all passed. Its
+release notes name the exact commit it came from.
 
-3. Unzip it into a folder you intend to keep — the browser loads the extension
-   from that folder on every start, so do not delete or move it afterwards.
-4. Open `chrome://extensions`, enable **Developer mode**, choose **Load
-   unpacked**, and select the unzipped folder.
+<details>
+<summary><b>Why is there no "Add to Chrome" button?</b></summary>
 
-### Option B — the latest snapshot
+Browsers only install extensions on click from their own store, and this
+extension is deliberately not published there: installing it unpacked means the
+folder you load is readable source, identical to what is in this repository. The
+trade-off is the three manual steps above, and that updates are manual too - see
+[Updating](#updating).
+</details>
 
-Every push to `main` publishes a
-[**snapshot** pre-release](https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/releases/tag/snapshot)
-built from that commit, at a stable address:
+<details>
+<summary><b>Verify the download</b></summary>
+
+The archive is built deterministically, so the checksum published beside it can
+be reproduced from source with `npm run build`.
 
 ```bash
 curl -LO https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/releases/download/snapshot/manage-tabgroups-snapshot.zip
 curl -LO https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/releases/download/snapshot/manage-tabgroups-snapshot.zip.sha256
 sha256sum -c manage-tabgroups-snapshot.zip.sha256
 ```
+</details>
 
-Then unzip and load it as in option A. A snapshot only exists once lint, types,
-tests, the browser run and the reproducible build have all passed for that
-commit, but it is unreleased code: prefer a tagged release once one exists. The
-release notes name the exact commit it was built from, and the file is replaced
-on every push.
+<details>
+<summary><b>Other ways to get it</b></summary>
 
-Individual commits on other branches are packaged too, as workflow artifacts on
-their [CI run](.github/workflows/ci.yml); those need a GitHub login and expire
-after 90 days.
+**Tagged releases.** No version has been tagged yet. Once one exists, the
+[latest release](https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/releases/latest)
+carries `manage-tabgroups-<version>.zip` and its checksum; snapshots are marked
+as pre-releases, so that link always resolves to a tagged version. Prefer a
+tagged release for stability once one exists.
 
-### Option C — from a clone
+**From a clone.** There is no build step: the `extension/` folder in the
+repository is exactly what the browser runs.
 
 ```bash
 git clone https://github.com/patbaumgartner/manage-tabgroups-chrome-extension.git
-cd manage-tabgroups-chrome-extension
 ```
 
-Then load the `extension/` directory via **Load unpacked**. There is no build
-step: the folder in the repository is exactly what the browser runs.
+Then *Load unpacked* → `manage-tabgroups-chrome-extension/extension`.
 
-### Where to find "Load unpacked"
+**A specific commit.** Every commit on every branch is packaged as a workflow
+artifact on its [CI run](.github/workflows/ci.yml). Those need a GitHub login
+and expire after 90 days.
+</details>
 
-| Browser  | Extensions page        |
-| -------- | ---------------------- |
-| Chrome   | `chrome://extensions`  |
-| Edge     | `edge://extensions`    |
-| Brave    | `brave://extensions`   |
-| Vivaldi  | `vivaldi://extensions` |
-| Opera    | `opera://extensions`   |
+### Updating
 
-Developer mode must be enabled before **Load unpacked** appears.
+Chrome cannot update an unpacked extension by itself, so updating is manual but
+quick: download the new zip, unzip it **over the same folder**, then click the
+reload arrow on the extension's card on your extensions page. Your saved
+sessions live in browser storage, not in the folder, so they survive.
+
+To hear about new versions without the extension ever touching the network,
+use **Watch → Custom → Releases** on this repository.
 
 ## Usage
 

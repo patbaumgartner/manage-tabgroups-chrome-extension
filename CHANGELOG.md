@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing has been released yet. These entries describe what is on `main` and
 will become the first tagged version. Until then, install the
-[snapshot build](README.md#option-b--the-latest-snapshot).
+[snapshot build](README.md#install).
 
 ### Added
 
