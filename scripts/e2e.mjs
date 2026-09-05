@@ -303,12 +303,20 @@ try {
     );
   });
   const worker = await cdp.attach(workerTarget.targetId);
+  await cdp.send('Runtime.enable', {}, worker);
 
   /**
    * @param {string} expression
    * @returns {Promise<unknown>}
    */
   const inWorker = (expression) => cdp.evaluate(worker, expression);
+
+  // Attaching to the worker target only means it exists. Its JavaScript context
+  // is created a moment later, and evaluating before that fails with
+  // "chrome is not defined" - reliably on a fast CI runner, rarely elsewhere.
+  await waitFor('the service worker context', async () => {
+    return (await inWorker('typeof chrome')) === 'object';
+  });
 
   console.info('\n1. The service worker starts cleanly');
   expect(
