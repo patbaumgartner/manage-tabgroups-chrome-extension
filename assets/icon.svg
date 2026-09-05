@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Manage Tab Groups">
+  <rect width="128" height="128" rx="26" ry="26" fill="#1a73e8"/>
+  <rect x="26" y="30" width="76" height="18" rx="9" ry="9" fill="#ffffff"/>
+  <rect x="26" y="55" width="58" height="18" rx="9" ry="9" fill="#ffffff" fill-opacity="0.8"/>
+  <rect x="26" y="80" width="40" height="18" rx="9" ry="9" fill="#ffffff" fill-opacity="0.6"/>
+</svg>

@@ -1,0 +1,46 @@
+{
+  "name": "manage-tabgroups-chrome-extension",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Manage Tab Groups - close every Chrome tab group at once and restore them with one click. Manifest V3, zero runtime dependencies, no network access.",
+  "keywords": [
+    "chrome-extension",
+    "manifest-v3",
+    "tab-groups",
+    "session-manager",
+    "edge-extension",
+    "brave"
+  ],
+  "homepage": "https://github.com/patbaumgartner/manage-tabgroups-chrome-extension#readme",
+  "bugs": {
+    "url": "https://github.com/patbaumgartner/manage-tabgroups-chrome-extension/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patbaumgartner/manage-tabgroups-chrome-extension.git"
+  },
+  "license": "MIT",
+  "author": "Patrick Baumgartner",
+  "type": "module",
+  "engines": {
+    "node": ">=20.11.0"
+  },
+  "scripts": {
+    "check": "npm run lint && npm run typecheck && npm run test && npm run validate",
+    "lint": "biome ci .",
+    "format": "biome format --write .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test 'tests/**/*.test.mjs'",
+    "test:coverage": "node --test --experimental-test-coverage 'tests/**/*.test.mjs'",
+    "validate": "node scripts/validate-manifest.mjs",
+    "build": "node scripts/build.mjs",
+    "e2e": "node scripts/e2e.mjs"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.12",
+    "@types/chrome": "0.2.8",
+    "@types/node": "^26.4.1",
+    "typescript": "7.0.2"
+  }
+}

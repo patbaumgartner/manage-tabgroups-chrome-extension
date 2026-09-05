@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Manage Tab Groups — Settings</title>
+    <link rel="stylesheet" href="../styles/shared.css" />
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page__header">
+        <h1 class="page__title">Manage Tab Groups</h1>
+        <p class="page__subtitle">
+          Version <span id="app-version">—</span> · Everything is stored on this device only.
+        </p>
+      </header>
+
+      <p id="unsupported" class="banner" hidden>
+        This browser does not provide the tab groups API, so saving and restoring is unavailable.
+      </p>
+
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+
+      <section class="card" aria-labelledby="settings-title">
+        <h2 id="settings-title" class="card__title">Settings</h2>
+
+        <fieldset class="field">
+          <legend class="field__label">Default scope</legend>
+          <label class="choice">
+            <input type="radio" name="scope" value="window" id="scope-window" />
+            <span>Current window only</span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="scope" value="all" id="scope-all" />
+            <span>All windows</span>
+          </label>
+        </fieldset>
+
+        <label class="choice">
+          <input type="checkbox" id="auto-backup" />
+          <span>
+            Automatically back up open tab groups
+            <small class="choice__hint">
+              A periodic snapshot so a crash or an accidental quit stays recoverable.
+            </small>
+          </span>
+        </label>
+
+        <label class="field field--inline" for="auto-backup-interval">
+          <span class="field__label">Backup every</span>
+          <input
+            type="number"
+            id="auto-backup-interval"
+            min="1"
+            max="240"
+            step="1"
+            inputmode="numeric"
+          />
+          <span class="field__suffix">minutes</span>
+        </label>
+
+        <label class="choice">
+          <input type="checkbox" id="close-popup" />
+          <span>Close the popup after an action</span>
+        </label>
+      </section>
+
+      <section class="card" aria-labelledby="sessions-title">
+        <div class="card__heading">
+          <h2 id="sessions-title" class="card__title">Saved sessions</h2>
+          <span id="sessions-count" class="card__hint"></span>
+        </div>
+        <p id="sessions-empty" class="card__hint">Nothing saved yet.</p>
+        <ul id="session-list" class="session-list"></ul>
+      </section>
+
+      <section class="card" aria-labelledby="backup-title">
+        <h2 id="backup-title" class="card__title">Export &amp; import</h2>
+        <p class="card__hint">
+          Exports are plain JSON containing the titles and addresses of your saved tab groups. Keep
+          the file private.
+        </p>
+        <div class="card__actions">
+          <button id="export" class="button button--small" type="button">Export to file</button>
+          <label class="button button--small" for="import-file">Import from file</label>
+          <input id="import-file" class="visually-hidden" type="file" accept="application/json,.json" />
+        </div>
+      </section>
+
+      <section class="card card--danger" aria-labelledby="danger-title">
+        <h2 id="danger-title" class="card__title">Danger zone</h2>
+        <p class="card__hint">Deleting saved sessions cannot be undone.</p>
+        <button id="clear-all" class="button button--small button--danger" type="button">
+          Delete all saved sessions
+        </button>
+      </section>
+
+      <section class="card" aria-labelledby="about-title">
+        <h2 id="about-title" class="card__title">Permissions &amp; privacy</h2>
+        <dl class="definitions">
+          <dt><code>tabs</code></dt>
+          <dd>Reads the address and title of grouped tabs so they can be restored later.</dd>
+          <dt><code>tabGroups</code></dt>
+          <dd>Reads and recreates tab groups, including their name and colour.</dd>
+          <dt><code>storage</code></dt>
+          <dd>Stores saved sessions locally. Browser sync is never used.</dd>
+          <dt><code>alarms</code></dt>
+          <dd>Schedules the periodic automatic backup.</dd>
+        </dl>
+        <p class="card__hint">
+          The extension declares no host permissions, injects no scripts into web pages, and makes
+          no network requests. Its content security policy blocks outbound connections entirely.
+        </p>
+        <p class="card__hint">
+          Source code:
+          <a
+            id="repo-link"
+            href="https://github.com/patbaumgartner/manage-tabgroups-chrome-extension"
+            rel="noreferrer noopener"
+            target="_blank"
+            >github.com/patbaumgartner/manage-tabgroups-chrome-extension</a
+          >
+        </p>
+      </section>
+    </main>
+
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

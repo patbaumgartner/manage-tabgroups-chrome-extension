@@ -1,0 +1,58 @@
+name: Bug report
+description: Something does not work the way it should
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please do not paste the contents of an export file: it contains your
+        browsing history.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did you do, what did you expect, and what happened instead?
+      placeholder: |
+        1. Opened the popup with 4 tab groups in this window
+        2. Clicked "Save & close all tab groups"
+        3. Expected ... but ...
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      description: Copy it from `chrome://version` (or the equivalent page).
+      placeholder: Chrome 152.0.7977.82 on Windows 11
+    validations:
+      required: true
+
+  - type: input
+    id: extension-version
+    attributes:
+      label: Extension version
+      description: Shown at the top of the options page.
+      placeholder: 1.0.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: errors
+    attributes:
+      label: Errors
+      description: >
+        Open the extensions page, click "Service worker" under this extension,
+        and paste anything red from the console.
+      render: text
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I am running the latest release
+          required: true
+        - label: I searched the existing issues
+          required: true

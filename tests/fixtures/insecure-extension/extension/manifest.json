@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Fixture",
+  "version": "1.0.0",
+  "permissions": ["tabs", "tabGroups", "storage", "alarms", "cookies"],
+  "host_permissions": ["<all_urls>"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'"
+  }
+}

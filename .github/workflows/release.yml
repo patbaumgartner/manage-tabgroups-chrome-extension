@@ -1,0 +1,84 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing tag to publish
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Package and publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - name: Check out the tagged commit
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 24.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run the local gates
+        run: npm run check
+
+      - name: Report the browser under test
+        run: google-chrome --version
+
+      - name: Run the end-to-end browser check
+        run: npm run e2e
+
+      - name: Confirm the tag, manifest and changelog agree
+        env:
+          RELEASE_REF: ${{ inputs.tag || github.ref_name }}
+        run: |
+          manifest_version=$(node -p "require('./extension/manifest.json').version")
+          tag_version="${RELEASE_REF#v}"
+          if [ "$manifest_version" != "$tag_version" ]; then
+            echo "::error::Tag $RELEASE_REF does not match manifest version $manifest_version"
+            exit 1
+          fi
+          if ! grep -q "^## \[$manifest_version\]" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no '## [$manifest_version]' section"
+            exit 1
+          fi
+
+      - name: Build the extension archive
+        run: npm run build
+
+      - name: Publish the GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_REF: ${{ inputs.tag || github.ref_name }}
+        run: |
+          checksum=$(cut -d' ' -f1 dist/*.zip.sha256)
+          {
+            echo "Install by downloading the archive, verifying it, unzipping it, and loading the"
+            echo "folder through **Load unpacked** on your browser's extensions page."
+            echo
+            echo '```'
+            echo "sha256  $checksum"
+            echo '```'
+          } > release-notes.md
+          gh release create "$RELEASE_REF" dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$RELEASE_REF" \
+            --notes-file release-notes.md \
+            --verify-tag

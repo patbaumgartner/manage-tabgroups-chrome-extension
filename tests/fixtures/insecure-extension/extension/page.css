@@ -1,0 +1,8 @@
+@import "https://cdn.example/other.css";
+body {
+  background-image: url("https://tracker.example/bg.png");
+  color: red;
+}
+.local {
+  background-image: url("../icons/icon-16.png");
+}

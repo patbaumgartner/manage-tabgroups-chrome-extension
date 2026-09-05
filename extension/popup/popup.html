@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Manage Tab Groups</title>
+    <link rel="stylesheet" href="../styles/shared.css" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="app__header">
+        <h1 class="app__title">Manage Tab Groups</h1>
+        <button
+          id="open-options"
+          class="icon-button"
+          type="button"
+          aria-label="Open settings and backups"
+        >
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+            <path
+              fill="currentColor"
+              d="M12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7Zm7.4-2.6.1-.9-.1-.9 1.9-1.5-1.9-3.2-2.3.9a7.4 7.4 0 0 0-1.6-.9L15.1 4H8.9l-.4 2.4c-.6.2-1.1.5-1.6.9l-2.3-.9-1.9 3.2L4.6 11l-.1.9.1.9-1.9 1.5 1.9 3.2 2.3-.9c.5.4 1 .7 1.6.9l.4 2.5h6.2l.4-2.5c.6-.2 1.1-.5 1.6-.9l2.3.9 1.9-3.2-1.9-1.4Z"
+            />
+          </svg>
+        </button>
+      </header>
+
+      <p id="unsupported" class="banner" hidden>
+        This browser does not provide the tab groups API, so this extension cannot run here.
+      </p>
+
+      <section class="scope">
+        <fieldset class="segmented">
+          <legend class="visually-hidden">Which windows to act on</legend>
+          <button
+            id="scope-window"
+            class="segmented__option"
+            type="button"
+            data-scope="window"
+            aria-pressed="true"
+          >
+            This window
+          </button>
+          <button
+            id="scope-all"
+            class="segmented__option"
+            type="button"
+            data-scope="all"
+            aria-pressed="false"
+          >
+            All windows
+          </button>
+        </fieldset>
+        <p id="live-summary" class="scope__summary">Checking open tab groups…</p>
+      </section>
+
+      <section class="actions" aria-label="Actions">
+        <button id="close-all" class="button button--primary" type="button">
+          Save &amp; close all tab groups
+        </button>
+        <div class="actions__row">
+          <button id="restore-latest" class="button button--success" type="button">
+            Restore latest
+          </button>
+          <button id="save-only" class="button button--ghost" type="button">Save only</button>
+        </div>
+      </section>
+
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+
+      <section class="sessions" aria-labelledby="sessions-title">
+        <h2 id="sessions-title" class="sessions__title">Saved sessions</h2>
+        <p id="sessions-empty" class="sessions__empty">
+          Nothing saved yet. Use “Save &amp; close all tab groups”.
+        </p>
+        <ul id="session-list" class="session-list"></ul>
+      </section>
+
+      <footer class="app__footer">
+        <button id="open-options-footer" class="link-button" type="button">
+          Settings, export &amp; import
+        </button>
+      </footer>
+    </main>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
