@@ -6,7 +6,6 @@ way to get a change merged is to keep it that way.
 ## Ground rules
 
 The extension makes three promises that a pull request must not break:
-
 1. **Four permissions.** `tabs`, `tabGroups`, `storage`, `alarms`. No host
    permissions, no content scripts, no web-accessible resources.
 2. **No network access, ever.** No `fetch`, no `XMLHttpRequest`, no
@@ -17,12 +16,11 @@ The extension makes three promises that a pull request must not break:
 `npm run validate` enforces all three, and it runs in CI.
 
 Two more, less mechanical:
-
 4. **Untrusted data is normalized in one place.** Page titles, stored JSON and
-   imported files all pass through `extension/src/model.js`, which is pure and
-   heavily tested. Do not scatter validation elsewhere.
+imported files all pass through `extension/src/model.js`, which is pure and
+heavily tested. Do not scatter validation elsewhere.
 5. **Never close what you have not saved.** If the extension cannot represent a
-   tab, it leaves that tab alone.
+tab, it leaves that tab alone.
 
 ## Getting set up
 
@@ -73,7 +71,6 @@ try your change by hand. Reload the extension from that page after every edit.
 ## Cutting a release
 
 No version has been tagged yet. When one is:
-
 1. Move the entries under `## [Unreleased]` in `CHANGELOG.md` into a new
    `## [x.y.z] - YYYY-MM-DD` section, and add the matching link definitions at
    the bottom of the file.
