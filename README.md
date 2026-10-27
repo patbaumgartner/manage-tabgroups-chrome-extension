@@ -26,7 +26,6 @@ forced restart for an update, or a "close all windows" at the wrong moment, and
 the groups are gone with no reliable way to bring them back.
 
 This extension makes that recoverable:
-
 1. It **saves before it closes** — a group is only closed once it is safely in
    local storage.
 2. It **snapshots on a timer**, so an unexpected quit still leaves something to
@@ -68,15 +67,15 @@ This extension makes that recoverable:
    delete or move it afterwards.
 2. **Open your extensions page** and switch on **Developer mode** (top right):
 
-   | Browser | Address |
-   | --- | --- |
-   | Chrome | `chrome://extensions` |
-   | Edge | `edge://extensions` |
-   | Brave | `brave://extensions` |
+   | Browser | Address                |
+   | ------- | ---------------------- |
+   | Chrome  | `chrome://extensions`  |
+   | Edge    | `edge://extensions`    |
+   | Brave   | `brave://extensions`   |
    | Vivaldi | `vivaldi://extensions` |
-   | Opera | `opera://extensions` |
+   | Opera   | `opera://extensions`   |
 
-3. **Click *Load unpacked*** and choose the unzipped folder. The icon appears in
+3. **Click _Load unpacked_** and choose the unzipped folder. The icon appears in
    the toolbar immediately.
 
 The download is the current tip of `main`, rebuilt on every push once lint,
@@ -122,7 +121,7 @@ repository is exactly what the browser runs.
 git clone https://github.com/patbaumgartner/manage-tabgroups-chrome-extension.git
 ```
 
-Then *Load unpacked* → `manage-tabgroups-chrome-extension/extension`.
+Then _Load unpacked_ → `manage-tabgroups-chrome-extension/extension`.
 
 **A specific commit.** Every commit on every branch is packaged as a workflow
 artifact on its [CI run](.github/workflows/ci.yml). Those need a GitHub login
@@ -142,7 +141,6 @@ use **Watch → Custom → Releases** on this repository.
 ## Usage
 
 Click the toolbar icon:
-
 - **Save & close all tab groups** — stores every group in scope, then closes
   exactly the tabs it stored.
 - **Restore latest** — recreates the most recent saved session in the current
@@ -155,12 +153,12 @@ every entry can be restored or deleted individually.
 
 The interface follows the browser's colour scheme:
 
-| Light | Dark |
-| --- | --- |
+| Light                                                                                     | Dark                                                                                                                                    |
+| ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | <img src="docs/screenshots/popup-light.png" alt="The popup in light mode." width="320" /> | <img src="docs/screenshots/popup-dark.png" alt="The same popup in dark mode, with the same layout on a dark background." width="320" /> |
 
 **Settings, export and import** live on the options page (the gear icon, or
-right-click the toolbar icon → *Options*).
+right-click the toolbar icon → _Options_).
 
 <p align="center">
   <img
@@ -174,21 +172,20 @@ right-click the toolbar icon → *Options*).
 
 Two commands ship without a default key so they cannot clash with anything you
 already use. Assign them at `chrome://extensions/shortcuts`:
-
-- *Save and close all tab groups*
-- *Restore the most recently saved session*
+- _Save and close all tab groups_
+- _Restore the most recently saved session_
 
 After a shortcut runs, the toolbar badge briefly shows how many groups were
 closed or restored (`!` if it failed).
 
 ## Permissions
 
-| Permission   | Why it is needed                                                                     |
-| ------------ | ------------------------------------------------------------------------------------ |
-| `tabs`       | Read the address and title of grouped tabs so they can be recreated later.            |
-| `tabGroups`  | Read and recreate tab groups, including their name, colour and collapsed state.       |
-| `storage`    | Store saved sessions locally, in `chrome.storage.local`.                              |
-| `alarms`     | Schedule the periodic automatic backup.                                               |
+| Permission  | Why it is needed                                                                |
+| ----------- | ------------------------------------------------------------------------------- |
+| `tabs`      | Read the address and title of grouped tabs so they can be recreated later.      |
+| `tabGroups` | Read and recreate tab groups, including their name, colour and collapsed state. |
+| `storage`   | Store saved sessions locally, in `chrome.storage.local`.                        |
+| `alarms`    | Schedule the periodic automatic backup.                                         |
 
 The extension declares **no host permissions**, injects **no content scripts**,
 exposes **no web-accessible resources**, and has **no** `externally_connectable`
@@ -228,9 +225,8 @@ runtime and says so instead of failing silently.
 ## Limitations
 
 Stated plainly, because they affect how much you should rely on it:
-
 - Automatic backups run on a timer. Groups created in the minutes before a crash
-  may not be in the last snapshot. Use *Save only* before risky operations.
+  may not be in the last snapshot. Use _Save only_ before risky operations.
 - Restored tabs load immediately; restoring a very large session takes memory
   and time, and tabs are recreated one at a time to preserve their order. There
   is no lazy restore, because Manifest V3 offers no supported way to create a

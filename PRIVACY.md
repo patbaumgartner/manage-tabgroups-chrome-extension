@@ -6,7 +6,6 @@ This extension collects nothing, sends nothing, and has no way to do either.
 
 Saved sessions live in `chrome.storage.local`, on your device, inside your
 browser profile. Each saved group contains:
-
 - the group's name, colour and collapsed state
 - for each tab in that group: its `http(s)` address and its page title
 
@@ -26,7 +25,6 @@ would leave a window empty. Nothing about the other tabs is written anywhere.
 ## Where it goes
 
 Nowhere. There is no server, no analytics, no crash reporting, no update ping.
-
 - The extension declares **no host permissions**, so it cannot talk to any site.
 - Its content security policy sets `connect-src 'none'`, which blocks outbound
   connections from its own pages.
@@ -48,7 +46,7 @@ keep it private, and do not attach it to a bug report.
 ## Deleting your data
 
 - **One session** — delete it from the popup or the options page.
-- **Everything** — *Danger zone → Delete all saved sessions* on the options page.
+- **Everything** — _Danger zone → Delete all saved sessions_ on the options page.
 - **Completely** — removing the extension from your browser deletes its local
   storage with it.
 
