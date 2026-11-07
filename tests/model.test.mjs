@@ -113,7 +113,7 @@ describe('buildSession', () => {
   it('never includes tabs that are not part of a group', () => {
     const { session, savedTabs } = buildSession({ groups, tabs });
     const urls = session.groups.flatMap((group) => group.tabs.map((tab) => tab.url));
-    assert.ok(!urls.includes('https://loose.example/'));
+    assert.ok(!urls.some((url) => new URL(url).hostname === 'loose.example'));
     assert.ok(!savedTabs.some((tab) => tab.id === 99));
   });
 
