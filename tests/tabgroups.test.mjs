@@ -287,7 +287,7 @@ describe('restoreSession', () => {
     const result = await restoreSession(session, { windowId: 1 });
     assert.equal(result.restoredTabs, 1);
     assert.equal(result.failures.length, 1);
-    assert.ok(!fake._state.tabs.some((tab) => tab.url.startsWith('javascript:')));
+    assert.ok(!fake._state.tabs.some((tab) => new URL(tab.url).protocol !== 'https:'));
   });
 
   it('normalises an unknown colour rather than failing the restore', async () => {
