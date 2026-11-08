@@ -108,7 +108,9 @@ describe('validateExtension', () => {
   it('does not mistake an ordinary link for a fetched resource', () => {
     const { errors } = validateExtension(join(ROOT, 'tests/fixtures/insecure-extension'));
     assert.ok(
-      !errors.some((error) => error.includes('example.com/docs') && error.includes('remote resource')),
+      !errors.some(
+        (error) => error.includes('example.com/docs') && error.includes('remote resource'),
+      ),
       'an anchor href is a navigation the user chooses, not a request',
     );
   });
