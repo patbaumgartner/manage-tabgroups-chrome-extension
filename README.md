@@ -26,6 +26,7 @@ forced restart for an update, or a "close all windows" at the wrong moment, and
 the groups are gone with no reliable way to bring them back.
 
 This extension makes that recoverable:
+
 1. It **saves before it closes** — a group is only closed once it is safely in
    local storage.
 2. It **snapshots on a timer**, so an unexpected quit still leaves something to
@@ -141,6 +142,7 @@ use **Watch → Custom → Releases** on this repository.
 ## Usage
 
 Click the toolbar icon:
+
 - **Save & close all tab groups** — stores every group in scope, then closes
   exactly the tabs it stored.
 - **Restore latest** — recreates the most recent saved session in the current
@@ -172,6 +174,7 @@ right-click the toolbar icon → _Options_).
 
 Two commands ship without a default key so they cannot clash with anything you
 already use. Assign them at `chrome://extensions/shortcuts`:
+
 - _Save and close all tab groups_
 - _Restore the most recently saved session_
 
@@ -225,6 +228,7 @@ runtime and says so instead of failing silently.
 ## Limitations
 
 Stated plainly, because they affect how much you should rely on it:
+
 - Automatic backups run on a timer. Groups created in the minutes before a crash
   may not be in the last snapshot. Use _Save only_ before risky operations.
 - Restored tabs load immediately; restoring a very large session takes memory
